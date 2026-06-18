@@ -1,15 +1,29 @@
 import { createPatient, removePatient } from './patient.js';
-import { loadPatients, savePatients } from './storage.js';
+import { loadPatients, savePatients } from './storage.js'; // فعلاً غیرفعالشان می‌کنیم یا حذف
 import { renderList, getFormData, clearForm, updateStats } from './ui.js';
+import { fetchPatients, syncAddPatient, syncRemovePatient } from './api.js';
 
-// ۱. بارگذاری اولیه
-let patients = loadPatients();
-renderList(patients);
-updateStats(patients);
+// ─── ۱. راه‌اندازی اولیه ───
+const init = async () => {
+  try {
+    const patients = await fetchPatients();
+    renderList(patients);
+    updateStats(patients);
 
-// ۲. گوش دادن به submit فرم (نه کلیک دکمه)
-document.getElementById('patientForm').addEventListener('submit', (e) => {
-  e.preventDefault(); // ← جلوی رفرش صفحه را می‌گیرد
+    // ذخیره در متغیر سراسری یا return کردن
+    return patients;
+  } catch (err) {
+    console.error(err);
+    alert('❌ خطا در بارگذاری داده‌ها از سرور');
+    return [];
+  }
+};
+
+let patients = await init();  // Top-level await (چون module هستیم)
+
+// ─── ۲. ثبت بیمار جدید ───
+document.getElementById('patientForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
 
   const data = getFormData();
 
@@ -19,33 +33,44 @@ document.getElementById('patientForm').addEventListener('submit', (e) => {
   }
 
   const newPatient = createPatient(data.name, data.age, data.phone);
-  patients = [...patients, newPatient];
 
-  savePatients(patients);
-  renderList(patients);
-  updateStats(patients);
-  clearForm();
-});
+  try {
+    await syncAddPatient(newPatient);
 
-// ۳. حذف بیمار
-document.getElementById('patientsList').addEventListener('click', (e) => {
-  if (e.target.classList.contains('delete-btn')) {
-    const id = Number(e.target.closest('.card').dataset.id);
-    patients = removePatient(patients, id);
-    savePatients(patients);
+    // دوباره لود کن تا مطمئن شوی با سرور همگام است
+    patients = await fetchPatients();
     renderList(patients);
     updateStats(patients);
+    clearForm();
+  } catch (err) {
+    console.error(err);
+    alert('❌ خطا در ثبت بیمار');
   }
 });
-// ۴. جستج لحظه‌ای (هر بار کاربر تایپ می‌کند)
-document.getElementById('searchInput').addEventListener('input', (e) => {
-  const term = e.target.value.trim();  // مقدار داخل جستجو
 
-  // اگه چیزی ننوشته، همه را نشان بده
-  // اگه چیزی نوشته، فقط بیمارانی که اسمشان شامل آن عبارت است
+// ─── ۳. حذف بیمار ───
+document.getElementById('patientsList').addEventListener('click', async (e) => {
+  if (e.target.classList.contains('delete-btn')) {
+    const id = Number(e.target.closest('.card').dataset.id);
+
+    try {
+      await syncRemovePatient(id);
+
+      patients = await fetchPatients();
+      renderList(patients);
+      updateStats(patients);
+    } catch (err) {
+      console.error(err);
+      alert('❌ خطا در حذف بیمار');
+    }
+  }
+});
+
+// ─── ۴. جستج لحظه‌ای ───
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const term = e.target.value.trim();
   const filtered = term
     ? patients.filter(p => p.name.includes(term))
     : patients;
-
   renderList(filtered);
 });
