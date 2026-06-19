@@ -1,0 +1,26 @@
+{
+  "patients": [
+    {
+      "id": "1",
+      "name": "علی احمدی",
+      "age": 32,
+      "phone": "09123456789",
+      "date": "۱۴۰۵/۰۳/۲۸"
+    },
+    {
+      "id": "2",
+      "name": "مریم رضایی",
+      "age": 27,
+      "phone": "09129876543",
+      "date": "۱۴۰۵/۰۳/۲۸"
+    },
+    {
+      "name": "زهرا نوروزی",
+      "age": 23,
+      "phone": "۰۹۱۲۱۲۳۱۲۳۴",
+      "date": "۱۴۰۵/۳/۲۹",
+      "id": "X5ua8pLdDFQ"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

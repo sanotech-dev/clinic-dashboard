@@ -1,0 +1,24 @@
+{
+  "name": "clinic-dashboard",
+  "version": "1.0.0",
+  "description": "سیستم مدیریت بیماران با طراحی Glassmorphism. پروژهٔ آموزشی برای تسلط بر JavaScript DOM و LocalStorage.",
+  "main": "api.js",
+  "scripts": {
+    "server": "json-server --watch db.json --port 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanotech-dev/clinic-dashboard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sanotech-dev/clinic-dashboard/issues"
+  },
+  "homepage": "https://github.com/sanotech-dev/clinic-dashboard#readme",
+  "dependencies": {
+    "json-server": "^1.0.0-beta.15"
+  }
+}
