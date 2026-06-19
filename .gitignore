@@ -1,14 +1,19 @@
-# سیستم‌عامل
+# macOS
 .DS_Store
+
+# Windows
 Thumbs.db
 
-# ویرایشگر
+# Editors
 .vscode/
 *.swp
 *.swo
 
-# لاگ
+# Logs
 *.log
 
-# اگه بعداً npm نصب کردی
+# Dependencies
 node_modules/
+
+# Environment variables
+.env
