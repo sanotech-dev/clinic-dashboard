@@ -20,6 +20,13 @@
       "phone": "۰۹۱۲۱۲۳۱۲۳۴",
       "date": "۱۴۰۵/۳/۲۹",
       "id": "X5ua8pLdDFQ"
+    },
+    {
+      "name": "سحر لک",
+      "age": 35,
+      "phone": "09121231234",
+      "date": "۱۴۰۵/۴/۵",
+      "id": "_Q0nutILcrc"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
