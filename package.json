@@ -20,5 +20,8 @@
   "homepage": "https://github.com/sanotech-dev/clinic-dashboard#readme",
   "dependencies": {
     "json-server": "^1.0.0-beta.15"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
   }
 }

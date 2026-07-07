@@ -31,7 +31,7 @@
 
         <!-- فرم ثبت -->
 <section class="form-section glass">
-    <h2>📝 ثبت بیمار جدید</h2>
+    <h2 id="formTitle">📝 ثبت بیمار جدید</h2>
     <form id="patientForm">
         <div class="form-group">
             <label for="name">نام و نام خانوادگی:</label>
@@ -40,17 +40,21 @@
         </div>
         <div class="form-group">
             <label for="age">سن:</label>
-            <input type="number" id="age" placeholder="مثال: 35">
+            <input type="number" id="age" placeholder="مثال: ۳۵" inputmode="numeric" pattern="[0-9]*">
             <span class="error-message" id="ageError"></span>
         </div>
         <div class="form-group">
             <label for="phone">شماره تماس:</label>
-            <input type="tel" id="phone" placeholder="مثال: 09123456789">
+            <input type="tel" id="phone" placeholder="مثال: ۰۹۱۲۳۴۵۶۷۸۹" inputmode="tel" pattern="[0-9]*">
             <span class="error-message" id="phoneError"></span>
         </div>
-        <button type="submit" class="btn-primary">➕ ثبت بیمار</button>
+        <div class="form-actions">
+            <button type="submit" id="submitBtn" class="btn-primary">➕ ثبت بیمار</button>
+            <button type="button" id="cancelBtn" class="btn-secondary hidden">❌ لغو ویرایش</button>
+        </div>
     </form>
 </section>
+
         <!-- جستجو -->
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="جستجو بر اساس نام بیمار...">
@@ -64,6 +68,6 @@
             </div>
         </section>
     </div>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="dist/app.js"></script>
 </body>
 </html>

@@ -1,6 +1,8 @@
-// validation.js
+// validation.ts
 
-// ─── قوانین Regex ───
+import { toLatinDigits } from './dateHelper.js';
+
+// ─── قوانین Regex (همیشه با اعداد لاتین کار می‌کنند) ───
 const patterns = {
   // حروف فارسی، انگلیسی و فاصله؛ حداقل ۲ کاراکتر
   name: /^[\u0600-\u06FFa-zA-Z\s]{2,}$/,
@@ -8,27 +10,35 @@ const patterns = {
   phone: /^09\d{9}$/
 };
 
+// ─── تایپ فیلدهای قابل ولیدیشن ───
+type FieldId = 'name' | 'age' | 'phone';
+
 // ─── اعتبارسنجی تک‌فیلد ───
-export function validateField(fieldId, value) {
+export function validateField(fieldId: FieldId, value: unknown): string | null {
   const v = typeof value === 'string' ? value.trim() : value;
 
   switch (fieldId) {
     case 'name': {
       if (!v) return "نام و نام خانوادگی الزامی است.";
+      if (typeof v !== 'string') return "نام باید متن باشد.";
       if (v.length < 2) return "نام باید حداقل ۲ حرف باشد.";
       if (!patterns.name.test(v)) return "نام فقط باید شامل حروف باشد.";
       return null;
     }
     case 'age': {
       if (v === "" || v === null || v === undefined) return "سن الزامی است.";
-      const num = Number(v);
+      // تبدیل اعداد فارسی به لاتین برای اعتبارسنجی
+      const latinValue = typeof v === 'string' ? toLatinDigits(v) : String(v);
+      const num = Number(latinValue);
       if (!Number.isFinite(num)) return "سن باید یک عدد معتبر باشد.";
       if (num < 1 || num > 120) return "سن باید بین ۱ تا ۱۲۰ سال باشد.";
       return null;
     }
     case 'phone': {
       if (!v) return "شماره تماس الزامی است.";
-      if (!patterns.phone.test(v)) return "فرمت شماره صحیح نیست (مثال: 09123456789).";
+      // تبدیل اعداد فارسی به لاتین برای اعتبارسنجی
+      const phoneStr = toLatinDigits(String(v).trim());
+      if (!patterns.phone.test(phoneStr)) return "فرمت شماره صحیح نیست (مثال: 09123456789).";
       return null;
     }
     default:
@@ -37,11 +47,20 @@ export function validateField(fieldId, value) {
 }
 
 // ─── اعتبارسنجی کل فرم ───
-export function validateForm(formData) {
-  const errors = {};
+interface ValidationResult {
+  isValid: boolean;
+  errors: Record<FieldId, string | null>;
+}
+
+export function validateForm(formData: Record<FieldId, unknown>): ValidationResult {
+  const errors: Record<FieldId, string | null> = {
+    name: null,
+    age: null,
+    phone: null
+  };
   let isValid = true;
 
-  for (const [key, value] of Object.entries(formData)) {
+  for (const [key, value] of Object.entries(formData) as [FieldId, unknown][]) {
     const error = validateField(key, value);
     if (error) {
       errors[key] = error;
@@ -53,9 +72,9 @@ export function validateForm(formData) {
 }
 
 // ─── نمایش خطا در UI ───
-export function showError(fieldId, message) {
-  const input = document.getElementById(fieldId);
-  const errorSpan = document.getElementById(`${fieldId}Error`);
+export function showError(fieldId: FieldId, message: string): void {
+  const input = document.getElementById(fieldId) as HTMLInputElement | null;
+  const errorSpan = document.getElementById(`${fieldId}Error`) as HTMLElement | null;
 
   if (input) input.classList.add('error');
   if (errorSpan) {
@@ -65,9 +84,9 @@ export function showError(fieldId, message) {
 }
 
 // ─── پاک کردن خطای یک فیلد ───
-export function clearError(fieldId) {
-  const input = document.getElementById(fieldId);
-  const errorSpan = document.getElementById(`${fieldId}Error`);
+export function clearError(fieldId: FieldId): void {
+  const input = document.getElementById(fieldId) as HTMLInputElement | null;
+  const errorSpan = document.getElementById(`${fieldId}Error`) as HTMLElement | null;
 
   if (input) input.classList.remove('error');
   if (errorSpan) {
@@ -77,6 +96,6 @@ export function clearError(fieldId) {
 }
 
 // ─── پاک کردن تمام خطاها ───
-export function clearAllErrors() {
-  ['name', 'age', 'phone'].forEach(clearError);
+export function clearAllErrors(): void {
+  (['name', 'age', 'phone'] as FieldId[]).forEach(clearError);
 }
